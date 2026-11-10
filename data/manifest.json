@@ -1,0 +1,83 @@
+{
+ "sections": [
+  {
+   "id": "states",
+   "title": "Состояния кнопок и полей",
+   "src": "ручной код по прототипу (31.10)"
+  },
+  {
+   "id": "ds",
+   "title": "Базовые (Design System)",
+   "src": "страница Design System"
+  },
+  {
+   "id": "icons",
+   "title": "Иконки",
+   "src": "Design System › Базовые · Иконки"
+  },
+  {
+   "id": "chat",
+   "title": "Чат",
+   "src": "Components Chat"
+  },
+  {
+   "id": "sidechat",
+   "title": "Боковой чат с Mary",
+   "src": "Компоненты бокового чата"
+  },
+  {
+   "id": "nav",
+   "title": "Навигация",
+   "src": "Меню, Меню настроек"
+  },
+  {
+   "id": "employees",
+   "title": "Сотрудники",
+   "src": "Components Сотрудники"
+  },
+  {
+   "id": "lists",
+   "title": "Списки, фильтры, аватары",
+   "src": "Components Сотрудники"
+  },
+  {
+   "id": "analytics",
+   "title": "Аналитика",
+   "src": "Components Analitics"
+  },
+  {
+   "id": "kb",
+   "title": "База знаний",
+   "src": "Components KnowledgeBase"
+  },
+  {
+   "id": "login",
+   "title": "Вход и регистрация",
+   "src": "Components Вход"
+  },
+  {
+   "id": "integrations",
+   "title": "Интеграции",
+   "src": "Light Theme"
+  },
+  {
+   "id": "mobile",
+   "title": "Мобилка",
+   "src": "Компоненты / Мобилка"
+  }
+ ],
+ "files": [
+  "ds",
+  "icons",
+  "chat",
+  "sidechat",
+  "nav",
+  "employees",
+  "lists",
+  "analytics",
+  "kb",
+  "login",
+  "integrations",
+  "mobile"
+ ]
+}

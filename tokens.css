@@ -1,0 +1,90 @@
+/* Mary UI — токены для компонентов состояний (31.10.2026)
+   Источник: ~/projects/mary-vision/src/theme.generated.css (Figma «Mary / Тема») + алиасы из index.html.
+   Светлая тема — по умолчанию; тёмная — [data-theme="dark"] на любом предке. */
+
+:root {
+  /* ── база темы (1:1 с прототипом) ── */
+  --bg-page: #FFFFFF;
+  --bg-panel: #FFFFFF;
+  --bg-popover: #FFFFFF;
+  --btn: #0E0E0F;
+  --on-btn: #FFFFFF;
+  --text: #494F5C;
+  --text-2: rgba(73,79,92,0.5);
+  --text-3: rgba(73,79,92,0.3);
+  --surface: rgba(73,79,92,0.05);
+  --border: rgba(73,79,92,0.1);
+  --accent: #0064FF;
+  --danger: #FF1E00;
+  --danger-bg: rgba(255,0,0,0.1);
+  --ok: #A6FF00;
+  --ink-rgb: 73,79,92;
+  --panel-rgb: 255,255,255;
+  --popover-rgb: 255,255,255;
+  --accent-rgb: 0,100,255;
+  --danger-rgb: 255,30,0;
+  --on-btn-rgb: 255,255,255;
+  --shadow-rgb: 73,79,92;
+}
+
+/* производные — пересчитываются внутри любого [data-theme], поэтому вынесены отдельно */
+:root, [data-theme] {
+  /* ── алиасы прототипа (index.html, src/ui/tokens.js → cv) ── */
+  --text-muted: var(--text-2);          /* cv.muted */
+  --text-ghost: var(--text-3);          /* cv.ghost */
+  --text-label: rgba(var(--ink-rgb),0.4);
+  --hover: var(--surface);              /* cv.hover */
+  --user-bubble: var(--surface);        /* фон активной вкладки */
+
+  /* ── состояния, которые повторяются в коде ── */
+  --line-10: rgba(var(--ink-rgb),0.1);  /* рамка по умолчанию: поле, обводочная кнопка, чип */
+  --line-14: rgba(var(--ink-rgb),0.14); /* рамка поиска при наведении / фокусе */
+  --line-20: rgba(var(--ink-rgb),0.2);  /* рамка поля переименования */
+  --grey-55: rgba(var(--ink-rgb),0.55); /* неактивный сегмент, подпись поля (CRM GREY) */
+  --ghost-35: rgba(var(--ink-rgb),0.35);/* счётчик, плейсхолдер select (CRM GHOST) */
+  --tooltip-bg: rgba(30,30,35,0.88);    /* тёмная подсказка под иконкой */
+  --glass-bg: rgba(var(--popover-rgb),0.55);
+  --glass-bg-hover: rgba(var(--popover-rgb),0.8);
+  --pop-bg: rgba(var(--popover-rgb),0.9);
+  --pop-shadow: 0 10px 28px rgba(20,22,30,0.14);
+
+  /* ── предложено (в коде прототипа нет) ── */
+  --pressed: rgba(var(--ink-rgb),0.08);             /* нажатие на прозрачных кнопках */
+  --focus-ring: 0 0 0 3px rgba(var(--ink-rgb),0.14); /* кольцо фокуса с клавиатуры: серое, без синего (Вика, 01.11) */
+  --disabled-opacity: 0.4;                           /* так в коде у «Создать» в CRM */
+
+  --font: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg-page: #0E0E0F;
+  --bg-panel: #161618;
+  --bg-popover: #1C1C1F;
+  --btn: #F2F2F5;
+  --on-btn: #0E0E0F;
+  --text: #F2F2F5;
+  --text-2: rgba(242,242,245,0.5);
+  --text-3: rgba(242,242,245,0.3);
+  --surface: rgba(242,242,245,0.06);
+  --border: rgba(242,242,245,0.1);
+  --accent: #3B82FF;
+  --danger: #FF4D3A;
+  --danger-bg: rgba(255,77,58,0.16);
+  --ink-rgb: 242,242,245;
+  --panel-rgb: 22,22,24;
+  --popover-rgb: 28,28,31;
+  --accent-rgb: 59,130,255;
+  --danger-rgb: 255,77,58;
+  --on-btn-rgb: 14,14,15;
+  --shadow-rgb: 0,0,0;
+}
+
+.mary-ui, .mary-ui * { box-sizing: border-box; }
+.mary-ui {
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  color: var(--text);
+}
+.mary-ui input::placeholder, .mary-ui textarea::placeholder { color: var(--text-2); opacity: 1; } /* предложено */
+@keyframes maryWave { 0%,100% { height: 4px } 50% { height: 16px } }
+@keyframes marySpin { to { transform: rotate(360deg) } }
