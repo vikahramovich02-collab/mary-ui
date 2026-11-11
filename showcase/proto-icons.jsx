@@ -18,11 +18,11 @@ export function ProtoIcons() {
   const groups = data.groups.map(g => ({ ...g, items: g.items.filter(it => !s || (it.name + " " + (it.files || [it.file]).join(" ") + " " + g.title).toLowerCase().includes(s)) })).filter(g => g.items.length);
   return (
     <>
-      <section className="card">
-        <div className="ch"><h2>Иконки прототипа · {total}</h2><span className="src" style={{ margin: 0 }}>Все иконки из кода прототипа mary-vision, без повторов. Клик — копировать SVG, наведение — в каких файлах используется</span></div>
-        <input className="search" style={{ maxWidth: 360, margin: "4px 0 2px" }} placeholder="Найти иконку: chat, search, файл…" value={q} onChange={e => setQ(e.target.value)} />
-        {s && <p className="src" style={{ margin: "8px 0 0" }}>Найдено: {groups.reduce((n, g) => n + g.items.length, 0)}</p>}
-      </section>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", margin: "28px 0 12px" }}>
+        <h2 style={{ margin: 0 }}>Иконки прототипа · {total}</h2>
+        <input className="search" style={{ width: 300, margin: 0 }} placeholder="Найти иконку" value={q} onChange={e => setQ(e.target.value)} />
+        <span className="src" style={{ margin: 0 }}>{s ? "Найдено: " + groups.reduce((n, g) => n + g.items.length, 0) : "Клик — скопировать SVG, наведение — где используется"}</span>
+      </div>
       {groups.map(g => (
         <section key={g.id} className="card">
           <div className="ch"><h2>{g.title} · {g.items.length}</h2>{g.note && <span className="src" style={{ margin: 0 }}>{g.note}</span>}</div>
