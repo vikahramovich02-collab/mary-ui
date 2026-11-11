@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import * as UI from "../components/index.js";
 import { StatesSection, CrmStatesSection } from "./states-demo.jsx";
 import { PopupsSection } from "./popups-demo.jsx";
+import { ProtoIcons } from "./proto-icons.jsx";
 import MANIFEST from "../data/manifest.json";
 
 const FIGMA = "https://www.figma.com/design/o1syNp93H3v2dyA3JHp4em/?node-id=";
@@ -49,7 +50,7 @@ function CompCard({ name, Comp }) {
 function IconsGrid({ items }) {
   return (
     <section className="card">
-      <div className="ch"><h2>Иконки · {items.length}</h2><span className="src" style={{ margin: 0 }}>16×16, линия 1.5 — SVG из Figma (Design System › Базовые · Иконки)</span></div>
+      <div className="ch"><h2>Базовые иконки · {items.length}</h2><span className="src" style={{ margin: 0 }}>16×16, линия 1.5 — SVG из Figma (Design System › Базовые · Иконки)</span></div>
       <div className="igrid">
         {items.map(([name, C]) => (
           <div key={name} className="icell" title={C.figma.id}>
@@ -94,7 +95,7 @@ export function App() {
         <input className="search" placeholder="Найти компонент" value={q} onChange={e => setQ(e.target.value)} />
         {SECS.map(s => (
           <button key={s.id} className={"navi" + (s.id === sec && !query ? " on" : "")} onClick={() => { setQ(""); setSec(s.id); }}>
-            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : (bySec[s.id] || []).length}</span>
+            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "icons" ? (bySec.icons || []).length + 373 : (bySec[s.id] || []).length}</span>
           </button>
         ))}
         {/* не нашли нужное — сразу в личный телеграм */}
@@ -130,7 +131,7 @@ export function App() {
                 : `Сгенерировано из Figma (${cur.src}): components/${sec}.jsx + data/${sec}.json. Каждый вариант — живой React-компонент, наведите курсор на варианты с состоянием «Наведение».`}</p>
             </header>
             <div id="pq-empty" className="lead" style={{ display: "none" }}>На этой странице ничего не нашлось. Попробуйте поиск слева — он ищет по всем компонентам</div>
-            {sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <IconsGrid items={bySec.icons || []} /> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
+            {sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <><IconsGrid items={bySec.icons || []} /><ProtoIcons /></> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
           </>
         )}
       </main>
