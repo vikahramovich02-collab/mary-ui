@@ -95,7 +95,7 @@ export function App() {
         <input className="search" placeholder="Найти компонент" value={q} onChange={e => setQ(e.target.value)} />
         {SECS.map(s => (
           <button key={s.id} className={"navi" + (s.id === sec && !query ? " on" : "")} onClick={() => { setQ(""); setSec(s.id); }}>
-            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "icons" ? (bySec.icons || []).length + 373 : (bySec[s.id] || []).length}</span>
+            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "icons" ? (bySec.icons || []).length + 360 : (bySec[s.id] || []).length}</span>
           </button>
         ))}
         {/* не нашли нужное — сразу в личный телеграм */}
