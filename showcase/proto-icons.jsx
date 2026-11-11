@@ -6,7 +6,7 @@ export function ProtoIcons() {
   const [data, setData] = useState(null);
   const [q, setQ] = useState("");
   const [copied, setCopied] = useState("");
-  useEffect(() => { fetch("data/proto-icons.json").then(r => r.json()).then(setData).catch(() => setData({ groups: [] })); }, []);
+  useEffect(() => { fetch("data/proto-icons.json", { cache: "no-cache" }).then(r => r.json()).then(setData).catch(() => setData({ groups: [] })); }, []);
   if (!data) return <section className="card"><div className="ch"><h2>Иконки прототипа</h2><span className="src" style={{ margin: 0 }}>загружаем…</span></div></section>;
   const s = q.trim().toLowerCase();
   const total = data.groups.reduce((n, g) => n + g.items.length, 0);
