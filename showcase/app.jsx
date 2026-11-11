@@ -50,7 +50,7 @@ function CompCard({ name, Comp }) {
 function IconsGrid({ items }) {
   return (
     <section className="card">
-      <div className="ch"><h2>Базовые иконки · {items.length}</h2><span className="src" style={{ margin: 0 }}>16×16, линия 1.5 — SVG из Figma (Design System › Базовые · Иконки)</span></div>
+      <div className="ch"><h2>Базовые иконки · {items.length}</h2><span className="src" style={{ margin: 0 }}>16×16 · рисунок из прототипа mary-vision, имена компонентов как в Figma</span></div>
       <div className="igrid">
         {items.map(([name, C]) => (
           <div key={name} className="icell" title={C.figma.id}>
