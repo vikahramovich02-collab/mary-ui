@@ -85,7 +85,7 @@ export function FigmaNode({ n, ctx, parentL, root, style }) {
     const tx = n.tx || [];
     const override = n.ref && ctx.text && ctx.text[n.ref] != null ? ctx.text[n.ref] : null;
     Object.assign(st, txtSeg(tx[0] || ["", 12, 400]));
-    st.fontFamily = n.ff && !/SF Pro/.test(n.ff) ? `'${n.ff}', var(--font)` : "var(--font)";
+    st.fontFamily = n.ff && !/SF Pro|Onest/.test(n.ff) ? `'${n.ff}', var(--font)` : "var(--font)";
     st.textAlign = { LEFT: "left", CENTER: "center", RIGHT: "right", JUSTIFIED: "justify" }[n.al?.[0]] || "left";
     st.whiteSpace = n.ar === "WIDTH_AND_HEIGHT" ? "pre" : "pre-wrap";
     st.overflowWrap = "break-word";

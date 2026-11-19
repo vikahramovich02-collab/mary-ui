@@ -249,7 +249,7 @@ import { ChatTab, AnalyticsMetric, LetterAvatar, IconPlus } from "./components/i
 | ⚑ `--focus-ring` | `0 0 0 3px rgba(accent,.24)` | кольцо фокуса с клавиатуры |
 | `--disabled-opacity` | 0.4 | так выключена «Создать» в CRM |
 
-`ink` = `rgba(var(--ink-rgb), α)`, где `--ink-rgb: 73,79,92`. Шрифт системный (SF Pro), кегли только целые.
+`ink` = `rgba(var(--ink-rgb), α)`, где `--ink-rgb: 73,79,92`. Шрифт — **Onest** (с 19.11.2026, вместо системного SF Pro; OFL, в продукте раздаём сами через `next/font/google`). Medium = 500, кегли только целые.
 
 ## Ручной код: значения по компонентам (components/states.jsx)
 
