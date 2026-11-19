@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import * as UI from "../components/index.js";
 import { StatesSection, CrmStatesSection } from "./states-demo.jsx";
 import { PopupsSection } from "./popups-demo.jsx";
+import { TypeSection } from "./type-demo.jsx";
 import { ProtoIcons } from "./proto-icons.jsx";
 import MANIFEST from "../data/manifest.json";
 
@@ -85,7 +86,7 @@ export function App() {
   const total = Object.values(bySec).reduce((a, l) => a + l.length, 0);
   const query = q.trim().toLowerCase();
   const hits = query ? Object.values(bySec).flat().filter(([n, C]) => n.toLowerCase().includes(query) || C.figma.name.toLowerCase().includes(query) || C.figma.id.includes(query)) : null;
-  const SECS = [MANIFEST.sections[0], { id: "states-crm", title: "Поля форм и CRM" }, { id: "popups", title: "Попапы" }, ...MANIFEST.sections.slice(1)];
+  const SECS = [MANIFEST.sections[0], { id: "states-crm", title: "Поля форм и CRM" }, { id: "popups", title: "Попапы" }, { id: "type", title: "Шрифт и стили" }, ...MANIFEST.sections.slice(1)];
   const cur = SECS.find(s => s.id === sec) || SECS[0];
   return (
     <div className="shell">
@@ -95,7 +96,7 @@ export function App() {
         <input className="search" placeholder="Найти компонент" value={q} onChange={e => setQ(e.target.value)} />
         {SECS.map(s => (
           <button key={s.id} className={"navi" + (s.id === sec && !query ? " on" : "")} onClick={() => { setQ(""); setSec(s.id); }}>
-            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "icons" ? (bySec.icons || []).length + 360 : (bySec[s.id] || []).length}</span>
+            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "type" ? 16 : s.id === "icons" ? (bySec.icons || []).length + 360 : (bySec[s.id] || []).length}</span>
           </button>
         ))}
         {/* не нашли нужное — сразу в личный телеграм */}
@@ -124,14 +125,16 @@ export function App() {
                 <h1>{cur.title}</h1>
                 <input className="search pq" placeholder="Найти на странице" value={pq} onChange={e => setPq(e.target.value)} />
               </div>
-              <p className="lead">{sec === "popups"
+              <p className="lead">{sec === "type"
+                ? "Шрифт Onest и текстовые стили Mary: что где использовать, размеры, вес и код. Источник — текстовые стили Mary DS/* и Mary/* в Figma."
+                : sec === "popups"
                 ? "Гайд: когда ставить попап, из чего он состоит, какие размеры и кнопки. Компонент Dialog в components/states.jsx — один на все случаи."
                 : sec === "states" || sec === "states-crm"
                 ? "Ручной код по прототипу mary-vision (components/states.jsx): hover / pressed / focus показаны статично через forceState."
                 : `Сгенерировано из Figma (${cur.src}): components/${sec}.jsx + data/${sec}.json. Каждый вариант — живой React-компонент, наведите курсор на варианты с состоянием «Наведение».`}</p>
             </header>
             <div id="pq-empty" className="lead" style={{ display: "none" }}>На этой странице ничего не нашлось. Попробуйте поиск слева — он ищет по всем компонентам</div>
-            {sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <><IconsGrid items={bySec.icons || []} /><ProtoIcons /></> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
+            {sec === "type" ? <TypeSection /> : sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <><IconsGrid items={bySec.icons || []} /><ProtoIcons /></> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
           </>
         )}
       </main>
