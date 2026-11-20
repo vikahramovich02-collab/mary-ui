@@ -1,6 +1,7 @@
 // Витрина: «Вход и регистрация» — компоненты взяты из кода прототипа (эталон), не из выгрузки Figma (Вика, 20.11.2026).
 // Источник: mary-vision/src/platform/vision-login.jsx и vision-join.jsx. Стили и тексты 1:1 оттуда.
 import React, { useState } from "react";
+import { MaryHead } from "./popups-demo.jsx";
 
 const ink = (a) => `rgba(var(--ink-rgb),${a})`;
 const INK = "var(--text)", GREY = ink(0.5), GHOST = ink(0.32), GREEN = "#2FA35B";
@@ -117,9 +118,9 @@ function Screens() {
         <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 500 }}><a href={FIG + "13416-42499"} target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textUnderlineOffset: 3 }}>Все экраны в Figma ↗</a></span>
       </div>
       <div style={{ fontSize: 13, color: GREY, marginTop: 6 }}>Вход, ошибки, восстановление пароля, создание организации, приглашение и системные экраны. Нажмите на экран — откроется в прототипе.</div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "20px 16px", marginTop: 20 }}>
+      <div style={{ display: "flex", gap: 16, marginTop: 20, overflowX: "auto", scrollSnapType: "x mandatory", paddingBottom: 10 }}>  {/* один ряд со скроллом (Вика, 20.11) */}
         {SCREENS.map(([f, n, q]) => (
-          <a key={f} href={PROTO + q} target="_blank" rel="noreferrer" style={{ textDecoration: "none", color: INK, minWidth: 0 }}>
+          <a key={f} href={PROTO + q} target="_blank" rel="noreferrer" style={{ flex: "0 0 180px", scrollSnapAlign: "start", textDecoration: "none", color: INK }}>
             <span style={{ display: "block", aspectRatio: "4 / 5", borderRadius: 14, overflow: "hidden", background: "var(--surface)", border: `1px solid ${ink(0.08)}` }}>
               <img src={`assets/login/f${f}.webp`} alt={n} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </span>
@@ -130,6 +131,17 @@ function Screens() {
     </section>
   );
 }
+
+
+const RefreshBtn = ({ busy }) => (
+  <button type="button" style={{ width: "100%", height: 36, border: "none", borderRadius: 999, background: "var(--btn)", color: "var(--on-btn)", cursor: busy ? "default" : "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "inherit", fontSize: 14, fontWeight: 500 }}>
+    <span style={{ display: "flex", animation: busy ? "lpSpin .8s linear infinite" : "none" }}>
+      <style>{"@keyframes lpSpin{to{transform:rotate(360deg)}}"}</style>
+      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7" /><path d="M20 4v7h-7" /></svg>
+    </span>
+    {busy ? "Обновляю…" : "Обновить страницу"}
+  </button>
+);
 
 // ─── каталог ───
 const Card = ({ title, tag, src, fig, proto, children }) => (
@@ -226,6 +238,34 @@ export function LoginProtoSection() {
       <Card title="Заголовок экрана" src="src/platform/vision-login.jsx:113 · vision-join.jsx:125" fig="13416-42499" proto="login=1">
         <V n="Вход / восстановление"><div style={{ maxWidth: 460, textAlign: "center" }}><div style={{ fontSize: 36, fontWeight: 500, color: INK, letterSpacing: "-0.022em", lineHeight: 1.2 }}>Войти в Mary</div><div style={{ fontSize: 13.5, color: GREY, marginTop: 14, lineHeight: 1.5 }}>Введите рабочую почту и пароль</div></div></V>
         <V n="Приглашение · две строки"><div style={{ maxWidth: 460, textAlign: "center" }}><div style={{ fontSize: 36, fontWeight: 500, color: INK, letterSpacing: "-0.022em", lineHeight: 1.2 }}>Вас приглашают в Mary</div><div style={{ fontSize: 36, fontWeight: 500, color: GREY, letterSpacing: "-0.022em", lineHeight: 1.2 }}>Салон «Мари»</div></div></V>
+      </Card>
+      <Card title="Системные: новая версия и смена аккаунта" src="src/platform/vision-update.jsx (NewVersionModal) · vision-login.jsx (mode switched)" fig="16255-65143" proto="update=1">
+        <V n="Попап «Вышла новая версия» · закрыть нельзя, только обновить">
+          <div style={{ width: 400, maxWidth: "100%", boxSizing: "border-box", background: "var(--bg-panel)", borderRadius: 24, border: `1px solid ${ink(0.05)}`, boxShadow: "0 18px 48px rgba(20,22,30,0.12)", padding: "24px 20px 20px" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
+              <MaryHead size={56} />
+              <span style={{ fontSize: 20, fontWeight: 500, color: INK, lineHeight: 1.3 }}>Вышла новая версия Mary</span>
+            </div>
+            <p style={{ margin: "8px auto 0", maxWidth: 300, textAlign: "center", fontSize: 14, color: GREY, lineHeight: 1.55 }}>Эта вкладка открыта на прошлой версии. Обновите страницу, чтобы продолжить</p>
+            <div style={{ marginTop: 24 }}><RefreshBtn /></div>
+          </div>
+        </V>
+        <V n="Кнопка «Обновить страницу» · 36, чёрная, иконка 16">
+          <div style={{ maxWidth: 360 }}><RefreshBtn /></div>
+          <div style={{ marginTop: 12, maxWidth: 360 }}><RefreshBtn busy /></div>
+          <div style={{ fontSize: 12, color: GREY, marginTop: 8 }}>Вторая — после нажатия: иконка крутится, «Обновляю…»</div>
+        </V>
+        <V n="Аккаунт изменился · строка аккаунта и действия">
+          <div style={{ maxWidth: 460 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, height: 58, boxSizing: "border-box", border: "1px solid var(--border)", borderRadius: 999, padding: "0 20px 0 9px" }}>
+              <span style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--btn)", display: "grid", placeItems: "center", fontSize: 14, fontWeight: 500, color: "var(--on-btn)", flexShrink: 0 }}>ЛС</span>
+              <span style={{ flex: 1, minWidth: 0 }}><span style={{ display: "block", fontSize: 14, fontWeight: 500, color: INK }}>Лена Соколова</span><span style={{ display: "block", fontSize: 12, color: GREY, marginTop: 2 }}>lena@salon.by · Салон «Лена»</span></span>
+              <span style={{ fontSize: 12, color: GREY }}>сейчас</span>
+            </div>
+            <button type="button" style={{ width: "100%", height: 48, marginTop: 16, border: "none", borderRadius: 999, background: "var(--btn)", color: "var(--on-btn)", fontFamily: "inherit", fontSize: 15, fontWeight: 500, cursor: "pointer" }}>Продолжить как Лена</button>
+            <span style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 6, marginTop: 14, fontSize: 14, fontWeight: 500, color: INK }}><Ico d={<path d="M19 12H5M11 6l-6 6 6 6" />} size={14} />Вернуться в аккаунт Александра</span>
+          </div>
+        </V>
       </Card>
     </>
   );

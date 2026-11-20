@@ -32,7 +32,7 @@ export const MaryHead = ({ size = 56 }) => {
   return (
     <span style={{ display: "block", width: size, height: size, position: "relative", overflow: "hidden" }}>
       <video src={A("mary-typing.mp4")} autoPlay loop muted playsInline preload="auto"
-        style={{ position: "absolute", left: Math.round(-17 * k), top: Math.round(-16 * k), width: Math.round(73 * k), height: Math.round(73 * k), mixBlendMode: "multiply" }} />
+        style={{ position: "absolute", left: Math.round(-17 * k), top: Math.round(-16 * k), width: Math.round(73 * k), height: Math.round(73 * k), mixBlendMode: "multiply", filter: "brightness(1.04) contrast(1.06)" }} />  {/* фон видео чуть серый — без фильтра вокруг головы виден квадрат (20.11) */}
     </span>
   );
 };
