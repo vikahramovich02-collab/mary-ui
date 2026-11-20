@@ -4,10 +4,12 @@
 import { figmaComponent } from "./core/figma-node.jsx";
 import DATA from "../data/login.json";
 
-/** Вход / Поле ввода · Figma 13481:19740 · пропы: state=Пусто|Заполнено|Пароль|С суффиксом */
+/** Вход / Поле ввода · Figma 13481:19740 · пропы: state=Пусто|Заполнено|Пароль|С суффиксом|Почта · пусто|Почта|Компания|Ошибка|Пароль · ошибка */
 export const LoginInput = figmaComponent(DATA["LoginInput"]);
-/** Вход / Подсказка под полем · Figma 13481:19748 · пропы: type=Опечатка|Домен|Пароли не совпадают */
+/** Вход / Подсказка под полем · Figma 13481:19748 · пропы: type=Опечатка|Домен|Пароли не совпадают|Пароль · требование|Пароль · мало символов|Пароль · выполнено|Неверный пароль|Почта не найдена */
 export const LoginHint = figmaComponent(DATA["LoginHint"]);
+/** Вход / Ссылка · Забыли пароль · Figma 16432:65384 · пропы: state=Обычная|После ошибки */
+export const LoginForgot = figmaComponent(DATA["LoginForgot"]);
 /** Вход / Кнопка Google · Figma 13481:19758 */
 export const LoginGoogleButton = figmaComponent(DATA["LoginGoogleButton"]);
 /** Вход / Кнопка · почта · Figma 13481:19778 · пропы: state=Неактивная|Активная */
