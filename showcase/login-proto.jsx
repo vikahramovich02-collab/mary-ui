@@ -107,6 +107,7 @@ const SCREENS = [
   ["01", "Вход", "login=1"], ["02", "Неверный пароль", "login=1"], ["03", "Почты нет", "login=1"],
   ["04", "Восстановить пароль", "login=reset"], ["05", "Проверьте почту", "login=reset"], ["06", "Новый пароль", "login=newpass"],
   ["07", "Ссылка устарела", "login=expired"], ["08", "Создать организацию", "login=org"], ["09", "Приглашение в команду", "join=7f3a91"],
+  ["10", "Аккаунт изменился", "login=switched"], ["11", "Вышла новая версия", "update=1"],
 ];
 function Screens() {
   return (
@@ -115,12 +116,14 @@ function Screens() {
         <h2 style={{ margin: 0 }}>Где это на экранах</h2>
         <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 500 }}><a href={FIG + "13416-42499"} target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textUnderlineOffset: 3 }}>Все экраны в Figma ↗</a></span>
       </div>
-      <div style={{ fontSize: 13, color: GREY, marginTop: 6 }}>Вход, ошибки, восстановление пароля, создание организации и приглашение. Нажмите на экран — откроется в прототипе.</div>
-      <div style={{ display: "flex", gap: 16, overflowX: "auto", marginTop: 18, paddingBottom: 6 }}>
+      <div style={{ fontSize: 13, color: GREY, marginTop: 6 }}>Вход, ошибки, восстановление пароля, создание организации, приглашение и системные экраны. Нажмите на экран — откроется в прототипе.</div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "20px 16px", marginTop: 20 }}>
         {SCREENS.map(([f, n, q]) => (
-          <a key={f} href={PROTO + q} target="_blank" rel="noreferrer" style={{ flex: "0 0 240px", textDecoration: "none", color: INK }}>
-            <img src={`assets/login/${f}.webp`} alt={n} loading="lazy" style={{ width: 240, height: 150, objectFit: "cover", borderRadius: 12, display: "block", boxShadow: `0 0 0 1px ${ink(0.08)}` }} />
-            <div style={{ fontSize: 13, fontWeight: 500, marginTop: 8 }}>{n}</div>
+          <a key={f} href={PROTO + q} target="_blank" rel="noreferrer" style={{ textDecoration: "none", color: INK, minWidth: 0 }}>
+            <span style={{ display: "block", aspectRatio: "4 / 5", borderRadius: 14, overflow: "hidden", background: "var(--surface)", border: `1px solid ${ink(0.08)}` }}>
+              <img src={`assets/login/f${f}.webp`} alt={n} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </span>
+            <span style={{ display: "block", fontSize: 13, fontWeight: 500, marginTop: 8 }}>{n}</span>
           </a>
         ))}
       </div>
