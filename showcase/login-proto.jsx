@@ -20,16 +20,19 @@ const icoLock = <><path d="M2 16c0-2.828 0-4.243.879-5.121C3.757 10 5.172 10 8 1
 const icoOrg = <><path d="M22 22H2" /><path d="M17 22V6c0-1.886 0-2.828-.586-3.414S14.886 2 13 2h-2c-1.886 0-2.828 0-3.414.586S7 4.114 7 6v16" /><path d="M21 22V8.5c0-1.404 0-2.107-.337-2.611a2 2 0 0 0-.552-.552C19.607 5 18.904 5 17.5 5M3 22V8.5c0-1.404 0-2.107.337-2.611a2 2 0 0 1 .552-.552C4.393 5 5.096 5 6.5 5M12 22v-3m-2-7h4m-4-3h4m-4-3h4" /></>;
 const icoUser = <><circle cx="12" cy="6" r="4" /><path d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5Z" /></>;
 const icoEye = <><path d="M3.275 15.296C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296C4.972 6.5 7.818 4 12 4s7.028 2.5 8.725 4.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20s-7.028-2.5-8.725-4.704Z" /><path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0Z" /></>;
+const icoEyeOff = <><path d="M3.275 15.296C2.425 14.192 2 13.639 2 12c0-1.64.425-2.191 1.275-3.296C4.972 6.5 7.818 4 12 4c1.633 0 3.06.381 4.284.985M20.725 8.704C21.575 9.81 22 10.361 22 12c0 1.64-.425 2.191-1.275 3.296C19.028 17.5 16.182 20 12 20c-1.633 0-3.06-.381-4.284-.985" /><path d="M9.88 14.12a3 3 0 0 1 4.24-4.24" /><path d="M21 3L3 21" /></>;
 const icoLink = <><path d="M10.046 14c-1.506-1.512-1.37-4.1.303-5.779l4.848-4.866c1.673-1.68 4.25-1.816 5.757-.305s1.37 4.1-.303 5.78l-2.424 2.433" /><path d="M13.954 10c1.506 1.512 1.37 4.1-.303 5.779l-2.424 2.433l-2.424 2.433c-1.673 1.68-4.25 1.816-5.757.305s-1.37-4.1.303-5.78l2.424-2.433" /></>;
 
-export function LoginField({ icon = icoMail, value = "", placeholder, password, eye, suffix, error }) {
+export function LoginField({ icon = icoMail, value = "", placeholder, password, eye, suffix, error, onChange, onBlur, onKeyDown }) {
   const [see, setSee] = useState(false);
+  const [own, setOwn] = useState(value);  // в витрине поле можно потрогать: печатать, стирать
+  const val = onChange ? value : own;
   return (
     <span style={{ position: "relative", display: "block", width: "100%", maxWidth: 460 }}>
       <span style={{ position: "absolute", left: 17, top: "50%", transform: "translateY(-50%)", color: GREY, display: "flex" }}><Ico d={icon} /></span>
-      <input readOnly value={value} placeholder={placeholder} type={password && !see ? "password" : "text"}
+      <input value={val} onChange={onChange || ((e) => setOwn(e.target.value))} onBlur={onBlur} onKeyDown={onKeyDown} placeholder={placeholder} type={password && !see ? "password" : "text"}
         style={{ ...fieldBase, paddingRight: eye ? 46 : suffix ? 86 : 18, ...(error ? errField : null) }} />
-      {eye && <span onClick={() => setSee(!see)} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", color: see ? INK : GHOST, cursor: "pointer", display: "flex" }}><Ico d={icoEye} size={17} /></span>}
+      {eye && <span onClick={() => setSee(!see)} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", color: see ? INK : GHOST, cursor: "pointer", display: "flex" }}><Ico d={see ? icoEyeOff : icoEye} size={17} /></span>}
       {suffix && <span style={{ position: "absolute", right: 18, top: "50%", transform: "translateY(-50%)", fontSize: 14, color: GHOST, pointerEvents: "none" }}>{suffix}</span>}
     </span>
   );
@@ -62,6 +65,69 @@ const MaryMark = ({ h = 20 }) => (
   </span>
 );
 
+
+const PASS_MIN = 8;
+const PERSONAL = /@(gmail\.com|mail\.ru|yandex\.(ru|by|com)|ya\.ru|icloud\.com|outlook\.com|bk\.ru|inbox\.ru|list\.ru|tut\.by)$/i;
+const isMail = (v) => /^[^\s@]+@[^\s@]+\.[a-zа-я]{2,}$/i.test(v.trim());
+function SandLogin() {
+  const [mail, setMail] = useState(""); const [pass, setPass] = useState(""); const [err, setErr] = useState(null); const [done, setDone] = useState(false);
+  const ok = isMail(mail) && pass.length >= 4;
+  const go = () => { if (!ok) return; if (PERSONAL.test(mail.trim())) return setErr("mail"); if (pass.length < PASS_MIN) return setErr("pass"); setErr(null); setDone(true); };
+  return (
+    <div style={{ maxWidth: 460 }}>
+      <LoginField icon={icoMail} placeholder="you@company.by" value={mail} error={err === "mail"} onChange={(e) => { setMail(e.target.value); setErr(null); setDone(false); }} />
+      {err === "mail" && <LoginHint tone="red">Аккаунта с этой почтой нет — проверьте адрес</LoginHint>}
+      <div style={{ marginTop: 10 }}><LoginField icon={icoLock} placeholder="Пароль" password eye value={pass} error={err === "pass"} onChange={(e) => { setPass(e.target.value); setErr(null); setDone(false); }} onKeyDown={(e) => e.key === "Enter" && go()} /></div>
+      <div style={{ display: "flex", justifyContent: err === "pass" ? "space-between" : "flex-end", marginTop: 8, padding: "0 18px" }}>
+        {err === "pass" && <span style={{ fontSize: 12, color: "var(--danger)" }}>Неверный пароль</span>}
+        <span style={{ fontSize: 12, color: err === "pass" ? INK : GREY, cursor: "pointer" }}>Забыли пароль?</span>
+      </div>
+      <div style={{ marginTop: 14 }} onClick={go}><LoginPrimary ok={ok}>Войти</LoginPrimary></div>
+      {done && <LoginHint tone="green">✓ Вход выполнен (демо)</LoginHint>}
+      <div style={{ fontSize: 12, color: GREY, marginTop: 12, lineHeight: 1.6 }}>Ошибки как в прототипе: личная почта (gmail.com, mail.ru…) — «почты нет», пароль короче 8 — «неверный пароль».</div>
+    </div>
+  );
+}
+function SandPass() {
+  const [p, setP] = useState(""); const [p2, setP2] = useState(""); const [t, setT] = useState(false);
+  const ok = p.length >= PASS_MIN, mism = p2.length > 3 && p !== p2;
+  return (
+    <div style={{ maxWidth: 460 }}>
+      <LoginField icon={icoLock} placeholder="Пароль" password eye value={p} onChange={(e) => setP(e.target.value)} onBlur={() => setT(true)} />
+      <LoginHint tone={ok ? "green" : t && p.length ? "red" : "grey"}>{ok ? "✓ Минимум 8 символов" : p.length ? `Минимум 8 символов — ещё ${PASS_MIN - p.length}` : "Минимум 8 символов"}</LoginHint>
+      <div style={{ marginTop: 10 }}><LoginField icon={icoLock} placeholder="Повторите пароль" password value={p2} error={mism} onChange={(e) => setP2(e.target.value)} /></div>
+      {mism && <LoginHint tone="red">Пароли не совпадают</LoginHint>}
+      <div style={{ marginTop: 18 }}><LoginPrimary ok={ok && !mism && p2 === p}>Создать и войти</LoginPrimary></div>
+    </div>
+  );
+}
+
+
+const SCREENS = [
+  ["01", "Вход", "login=1"], ["02", "Неверный пароль", "login=1"], ["03", "Почты нет", "login=1"],
+  ["04", "Восстановить пароль", "login=reset"], ["05", "Проверьте почту", "login=reset"], ["06", "Новый пароль", "login=newpass"],
+  ["07", "Ссылка устарела", "login=expired"], ["08", "Создать организацию", "login=org"], ["09", "Приглашение в команду", "join=7f3a91"],
+];
+function Screens() {
+  return (
+    <section className="card">
+      <div style={{ display: "flex", alignItems: "baseline", gap: 12, flexWrap: "wrap" }}>
+        <h2 style={{ margin: 0 }}>Где это на экранах</h2>
+        <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 500 }}><a href={FIG + "13416-42499"} target="_blank" rel="noreferrer" style={{ color: "var(--accent)", textUnderlineOffset: 3 }}>Все экраны в Figma ↗</a></span>
+      </div>
+      <div style={{ fontSize: 13, color: GREY, marginTop: 6 }}>Вход, ошибки, восстановление пароля, создание организации и приглашение. Нажмите на экран — откроется в прототипе.</div>
+      <div style={{ display: "flex", gap: 16, overflowX: "auto", marginTop: 18, paddingBottom: 6 }}>
+        {SCREENS.map(([f, n, q]) => (
+          <a key={f} href={PROTO + q} target="_blank" rel="noreferrer" style={{ flex: "0 0 240px", textDecoration: "none", color: INK }}>
+            <img src={`assets/login/${f}.webp`} alt={n} loading="lazy" style={{ width: 240, height: 150, objectFit: "cover", borderRadius: 12, display: "block", boxShadow: `0 0 0 1px ${ink(0.08)}` }} />
+            <div style={{ fontSize: 13, fontWeight: 500, marginTop: 8 }}>{n}</div>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ─── каталог ───
 const Card = ({ title, tag, src, fig, proto, children }) => (
   <section className="card">
@@ -84,6 +150,13 @@ const V = ({ n, children }) => (
 export function LoginProtoSection() {
   return (
     <>
+      <Screens />
+
+      <Card title="Попробовать" src="src/platform/vision-login.jsx — логика tryLogin, PASS_MIN, подсказки" fig="13416-42499" proto="login=1">
+        <V n="Вход · введите почту и пароль"><SandLogin /></V>
+        <V n="Пароль · создание организации, новый пароль"><SandPass /></V>
+      </Card>
+
       <Card title="Поле ввода" tag="LoginField" src="src/platform/vision-login.jsx:36 (Field) · fieldBase :17" fig="13481-19740" proto="login=1">
         <V n="Почта · пусто"><LoginField icon={icoMail} placeholder="you@company.by" /></V>
         <V n="Почта · заполнено"><LoginField icon={icoMail} value="lena@salon.by" /></V>
@@ -97,7 +170,7 @@ export function LoginProtoSection() {
       </Card>
 
       <Card title="Иконки полей" tag="Ico" src="src/platform/vision-login.jsx:29–34 (icoMail, icoLock, icoOrg, icoUser, icoEye, icoLink)" fig="16432-65168" proto="login=org">
-        {[[icoMail, "Почта", "icoMail"], [icoLock, "Пароль", "icoLock"], [icoUser, "Имя", "icoUser"], [icoOrg, "Компания", "icoOrg"], [icoLink, "Адрес пространства", "icoLink"], [icoEye, "Показать пароль", "icoEye"]].map(([d, n, k]) => (
+        {[[icoMail, "Почта", "icoMail"], [icoLock, "Пароль", "icoLock"], [icoUser, "Имя", "icoUser"], [icoOrg, "Компания", "icoOrg"], [icoLink, "Адрес пространства", "icoLink"], [icoEye, "Показать пароль", "icoEye"], [icoEyeOff, "Скрыть пароль", "icoEyeOff"]].map(([d, n, k]) => (
           <div key={k} style={{ display: "flex", alignItems: "center", gap: 16 }}>
             <span style={{ width: 48, height: 48, borderRadius: 14, background: "var(--surface)", display: "grid", placeItems: "center", color: INK }}><Ico d={d} size={20} /></span>
             <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
