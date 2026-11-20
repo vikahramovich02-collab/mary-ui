@@ -8,7 +8,7 @@ import { AuthSection } from "./auth-demo.jsx";
 import { ProtoIcons } from "./proto-icons.jsx";
 import MANIFEST from "../data/manifest.json";
 
-const FIGMA = "https://www.figma.com/design/o1syNp93H3v2dyA3JHp4em/?node-id=";
+const FIGMA = "https://www.figma.com/design/o1syNp93H3v2dyA3JHp4em/Mary?node-id=";
 const vpLabel = (vp) => Object.entries(vp).map(([k, v]) => `${k}=${v}`).join(", ") || "единственный вариант";
 
 function Scaled({ w, h, max, children }) {
@@ -30,7 +30,7 @@ function CompCard({ name, Comp }) {
       <div className="ch">
         <h2>{d.name}</h2>
         <code className="exp">{"<" + name + " />"}</code>
-        <a className="fid" href={FIGMA + d.id.replace(":", "-")} target="_blank" rel="noreferrer">Figma {d.id}</a>
+        <a className="fid" href={FIGMA + d.id.replace(":", "-")} target="_blank" rel="noreferrer"title={"Figma " + d.id}>Открыть в Figma ↗</a>
       </div>
       <div className="src">
         {Object.keys(d.map).length ? "Пропы: " + Object.entries(d.map).map(([k, js]) => js + (d.props[k].o ? ` (${d.props[k].o.join(" | ")})` : ` · ${d.props[k].t.toLowerCase()}`)).join(" · ") : "Без свойств"}
