@@ -91,6 +91,57 @@ function HeadDemo() {
   );
 }
 
+// ── шкала, вариант 2 (на пробу, 23.11): одна сплошная линия, голова Mary едет по ней,
+// значки шагов стоят на линии как остановки, подпись только у текущего шага, справа — сколько осталось
+function OnbHead2({ at, got = 0 }) {
+  const total = STEPS.length, done = at >= total;
+  const frac = done ? 1 : (at + Math.min(got, STEPS[at].n) / STEPS[at].n) / total;      // 0…1
+  const left = done ? 0 : STEPS.slice(at).reduce((a, s) => a + s.n, 0) - got;             // сколько вопросов и разделов впереди
+  const mins = Math.max(1, Math.round(left * 15 / 60));
+  const atStop = !done && at > 0 && got === 0;     // Mary доехала до остановки: голова прячется, оживает значок шага
+  const EASE = "cubic-bezier(.4,0,.2,1)";
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 18, height: 40 }}>
+      <span style={{ fontSize: 13, color: "var(--text)", whiteSpace: "nowrap", minWidth: 170 }}>{done ? "Знакомство пройдено" : STEPS[at].label}</span>
+      <span style={{ flex: 1, position: "relative", height: 40 }}>
+        <span style={{ position: "absolute", left: 0, right: 0, top: 19, height: 2, borderRadius: 2, background: ink(0.1) }} />
+        <span style={{ position: "absolute", left: 0, top: 19, height: 2, borderRadius: 2, background: "var(--btn, #0E0E0F)", width: frac * 100 + "%", transition: `width .7s ${EASE}` }} />
+        {STEPS.slice(1).map((s, k) => {
+          const i = k + 1, state = i < at ? "done" : i === at ? "current" : "next";
+          return (
+            <span key={s.id} title={s.label} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 4, width: 32, height: 32, marginLeft: -16, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center",
+              transform: state === "current" && atStop ? "scale(1.18)" : "none", transition: "transform .35s cubic-bezier(.2,.9,.3,1.4)" }}>
+              <StepIcon id={s.id} state={state === "current" && !atStop ? "done" : state} />
+            </span>
+          );
+        })}
+        <span style={{ position: "absolute", right: -3, top: 16, width: 8, height: 8, borderRadius: "50%", boxSizing: "border-box", background: done ? "var(--btn, #0E0E0F)" : "#fff", border: done ? "none" : `1.5px solid ${ink(0.2)}` }} />
+        <img src="assets/mary-head.png" alt="" width={26} height={26}
+          style={{ position: "absolute", top: 7, left: frac * 100 + "%", marginLeft: -13, display: "block", transition: `left .7s ${EASE}, opacity .25s ease .45s, transform .25s ease .45s`, opacity: atStop || done ? 0 : 1, transform: atStop || done ? "scale(.6)" : "none" }} />
+      </span>
+      <span style={{ fontSize: 12, color: ink(0.45), whiteSpace: "nowrap", minWidth: 96, textAlign: "right" }}>{done ? "готово" : `осталось ~${mins} мин`}</span>
+    </div>
+  );
+}
+
+function HeadCompare() {
+  const [at, setAt] = useState(0), [got, setGot] = useState(2);
+  const pill = (on) => ({ height: 32, padding: "0 14px", borderRadius: 999, border: `1px solid ${on ? "transparent" : ink(0.14)}`, background: on ? "#0E0E0F" : "#fff", color: on ? "#fff" : "var(--text)", font: "inherit", fontSize: 13, fontWeight: 500, cursor: "pointer" });
+  const next = () => { if (at >= STEPS.length) return; if (got + 1 >= STEPS[at].n) { setAt(at + 1); setGot(0); } else setGot(got + 1); };
+  const cap = { fontSize: 12, color: "var(--text-2)", margin: "0 0 10px" };
+  return (
+    <>
+      <Stage><div style={cap}>Новый вариант</div><OnbHead2 at={at} got={got} /></Stage>
+      <Stage><div style={cap}>Как сейчас</div><OnbHead at={Math.min(at, STEPS.length)} got={got} /></Stage>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12, alignItems: "center" }}>
+        <button style={pill(true)} onClick={next}>Ответить на вопрос →</button>
+        {STEPS.map((s, i) => <button key={s.id} style={pill(false)} onClick={() => { setAt(i); setGot(0); }}>К шагу {i + 1}</button>)}
+        <button style={pill(false)} onClick={() => { setAt(0); setGot(0); }}>Сначала</button>
+      </div>
+    </>
+  );
+}
+
 // варианты ответа в чате знакомства: два столбца, стрелка слева, серый текст, на наведении — тёмный
 function Options({ items }) {
   const [h, setH] = useState(-1);
@@ -161,6 +212,12 @@ export function OnbSection() {
         <HeadDemo />
         <Spec rows={[["Высота строки", "30"], ["Голова Mary", "26 × 26"], ["Значок шага", "22 × 22, в ячейке 32"], ["Подпись", "13 Regular; будущий шаг — 35% чернил"], ["Линия", "овальчики 2 высотой, зазор 2; пройденные чёрные, остальные 10% чернил; заливка едет слева направо за 0,6 с"], ["Точка шага", "8; пройденная чёрная, будущая — белая с обводкой"]]} />
         <Rules items={["Подпись видна у пройденных, текущего и следующего шага. У остальных — только значок.", "Не хватает ширины — подпись остаётся только у текущего шага.", <>Код: <Code>OnbHead</Code> в <Code>src/platform/onb-cards.jsx</Code>, шаги — <Code>ONB_STEPS</Code> в <Code>onboarding-flow.js</Code>.</>]} />
+      </Card>
+
+      <Card id="onb-head2" title="Шкала шагов — вариант на пробу"
+        lead="Одна строка вместо двух. Сплошная линия, по которой едет голова Mary. Значки шагов стоят на линии как остановки: Mary доезжает — значок оживает. Подпись только у текущего шага, справа — сколько осталось. Жмите «Ответить на вопрос» и сравнивайте с текущей шкалой под ней.">
+        <HeadCompare />
+        <Rules items={["Сколько вопросов внутри шага, не показываем — показываем, далеко ли до конца.", "Время справа считается от числа оставшихся вопросов и разделов (около 15 секунд на каждый).", "Названия остальных шагов — по наведению на значок.", "Это проба в витрине. В прототипе пока стоит прежняя шкала."]} />
       </Card>
 
       <Card id="onb-icons" title="Значки шагов"
