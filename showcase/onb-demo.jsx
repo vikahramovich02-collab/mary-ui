@@ -65,7 +65,9 @@ function OnbHead({ at, got = 0 }) {
             <span style={{ position: "absolute", left: i ? 12 : 9, top: 0, width: 8, height: 8, borderRadius: "50%", boxSizing: "border-box", background: i <= at ? "var(--btn, #0E0E0F)" : "#fff", border: i <= at ? "none" : `1.5px solid ${ink(0.2)}` }} />
             <span style={{ width: 8, flexShrink: 0 }} />
             {Array.from({ length: s.n }, (_, j) => (
-              <span key={j} style={{ flex: 1, height: 2, borderRadius: 2, background: i < at || (i === at && j < got) ? "var(--btn, #0E0E0F)" : ink(0.1), transition: "background .4s ease" }} />
+              <span key={j} style={{ flex: 1, height: 2, borderRadius: 2, overflow: "hidden", background: ink(0.1) }}>
+                <span style={{ display: "block", height: "100%", borderRadius: 2, background: "var(--btn, #0E0E0F)", width: i < at || (i === at && j < got) ? "100%" : "0%", transition: "width .6s cubic-bezier(.4,0,.2,1)" }} />
+              </span>
             ))}
           </span>
         ))}
@@ -163,7 +165,7 @@ export function OnbSection() {
       <Card id="onb-head" title="Шкала шагов"
         lead={<>Стоит в шапке чата всё знакомство. Слева голова Mary с названием, дальше три шага в равных колонках. Под ними линия: у каждого шага столько овальчиков, сколько в нём вопросов или разделов. Нажмите на шаги ниже. <a href={PROTO} target="_blank" rel="noreferrer">Открыть в прототипе ↗</a></>}>
         <HeadDemo />
-        <Spec rows={[["Высота строки", "30"], ["Голова Mary", "26 × 26"], ["Значок шага", "22 × 22, в ячейке 32"], ["Подпись", "13 Regular; будущий шаг — 35% чернил"], ["Линия", "овальчики 2 высотой, зазор 2; пройденные чёрные, остальные 10% чернил"], ["Точка шага", "8; пройденная чёрная, будущая — белая с обводкой"]]} />
+        <Spec rows={[["Высота строки", "30"], ["Голова Mary", "26 × 26"], ["Значок шага", "22 × 22, в ячейке 32"], ["Подпись", "13 Regular; будущий шаг — 35% чернил"], ["Линия", "овальчики 2 высотой, зазор 2; пройденные чёрные, остальные 10% чернил; заливка едет слева направо за 0,6 с"], ["Точка шага", "8; пройденная чёрная, будущая — белая с обводкой"]]} />
         <Rules items={["Подпись видна у пройденных, текущего и следующего шага. У остальных — только значок.", "Не хватает ширины — подпись остаётся только у текущего шага.", <>Код: <Code>OnbHead</Code> в <Code>src/platform/onb-cards.jsx</Code>, шаги — <Code>ONB_STEPS</Code> в <Code>onboarding-flow.js</Code>.</>]} />
       </Card>
 
