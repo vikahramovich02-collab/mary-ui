@@ -109,35 +109,29 @@ function Options({ items }) {
   );
 }
 
-// картинка раздела «Главная»: тёмная плашка, зернистый градиент, растровые точки, поверх — плашки интерфейса
+// картинка раздела «Главная»: светлый фон, главный герой — «Сводка дня» от Mary, за ней зернистая плашка-градиент, справа две плитки с числами
 function SceneHome({ height = 140 }) {
-  const dots = [];
-  for (let y = 0; y < 8; y++) for (let x = 0; x < 15; x++) {
-    const d = Math.hypot((x - 6.5) / 7.5, (y - 4.2) / 4.2), r = Math.max(0, 3.1 * (1 - d * d));
-    if (r > 0.35) dots.push(<circle key={x + "-" + y} cx={4 + x * 7} cy={4 + y * 7} r={r} />);
-  }
-  const row = (c, t) => <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 9, fontWeight: 500, color: "#494F5C", whiteSpace: "nowrap" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: c }} />{t}</span>;
+  const row = (c, t) => <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 9, fontWeight: 500, color: "#494F5C", whiteSpace: "nowrap" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: c }} />{t}</span>;
+  const tile = (n, t, top, c) => (
+    <div style={{ position: "absolute", right: 12, top, width: 76, height: 50, background: "#fff", borderRadius: 12, boxSizing: "border-box", padding: "8px 9px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 6px 16px rgba(40,50,120,0.10)" }}>
+      <span style={{ fontSize: 18, fontWeight: 500, lineHeight: 1, letterSpacing: "-0.03em", color: c }}>{n}</span>
+      <span style={{ fontSize: 8, fontWeight: 500, color: "rgba(73,79,92,0.55)", whiteSpace: "nowrap" }}>{t}</span>
+    </div>
+  );
   return (
-    <div style={{ position: "relative", height, borderRadius: 14, overflow: "hidden", background: "#0E0E0F" }}>
-      <div style={{ position: "absolute", left: 14, top: 14, width: 104, bottom: 14, borderRadius: 16, overflow: "hidden",
-        background: "radial-gradient(60% 55% at 20% 18%, #FF6FD8 0%, rgba(255,111,216,0) 70%), radial-gradient(70% 60% at 85% 35%, #4B3AFF 0%, rgba(75,58,255,0) 72%), radial-gradient(70% 60% at 30% 95%, #0064FF 0%, rgba(0,100,255,0) 72%), radial-gradient(50% 45% at 90% 100%, #FCA024 0%, rgba(252,160,36,0) 70%), #6A5AFF" }}>
-        <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, mixBlendMode: "overlay", opacity: 0.9 }}>
+    <div style={{ position: "relative", height, borderRadius: 14, overflow: "hidden", background: "linear-gradient(160deg, #EEF0FA 0%, #F4F5F9 60%, #F7F7FA 100%)" }}>
+      <div style={{ position: "absolute", left: 14, top: 14, width: 96, height: 84, borderRadius: 16, overflow: "hidden",
+        background: "radial-gradient(60% 55% at 20% 18%, #FF8FE0 0%, rgba(255,143,224,0) 70%), radial-gradient(70% 60% at 85% 35%, #6A5AFF 0%, rgba(106,90,255,0) 72%), radial-gradient(70% 60% at 30% 95%, #2F7BFF 0%, rgba(47,123,255,0) 72%), radial-gradient(50% 45% at 92% 100%, #FCA024 0%, rgba(252,160,36,0) 70%), #7C6DFF" }}>
+        <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, mixBlendMode: "overlay", opacity: 0.85 }}>
           <filter id="ui-home-grain"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" stitchTiles="stitch" /><feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.4 -0.35" /></filter>
           <rect width="100%" height="100%" filter="url(#ui-home-grain)" />
         </svg>
       </div>
-      <svg width={106} height={58} viewBox="0 0 106 58" style={{ position: "absolute", right: 6, bottom: 4 }} fill="#B4A9FF">{dots}</svg>
-      <div style={{ position: "absolute", left: 56, top: 50, width: 130, background: "#fff", borderRadius: 12, boxSizing: "border-box", padding: "8px 10px 9px", display: "flex", flexDirection: "column", gap: 5, boxShadow: "0 12px 26px rgba(0,0,0,0.35)" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}><img src="assets/mary-head.png" alt="" width={15} height={15} /><span style={{ fontSize: 11, fontWeight: 500, color: "#494F5C" }}>Сводка дня</span></span>
-        {row("#34C759", "Ответила 38 клиентам")}{row("#FCA024", "2 дела ждут вас")}
+      <div style={{ position: "absolute", left: 26, top: 36, width: 126, background: "#fff", borderRadius: 14, boxSizing: "border-box", padding: "10px 11px 11px", display: "flex", flexDirection: "column", gap: 6, boxShadow: "0 12px 28px rgba(40,50,120,0.18)" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}><img src="assets/mary-head.png" alt="" width={16} height={16} /><span style={{ fontSize: 11.5, fontWeight: 500, color: "#494F5C" }}>Сводка дня</span></span>
+        {row("#34C759", "Ответила 38 клиентам")}{row("#0064FF", "4 заявки завела в CRM")}{row("#FCA024", "2 дела ждут вас")}
       </div>
-      <div style={{ position: "absolute", right: 16, top: 14, color: "#fff", textAlign: "right" }}>
-        <div style={{ fontSize: 22, fontWeight: 500, lineHeight: 1, letterSpacing: "-0.03em" }}>23</div>
-        <div style={{ fontSize: 8.5, fontWeight: 500, opacity: 0.6, marginTop: 3 }}>дела за вчера</div>
-      </div>
-      <div style={{ position: "absolute", left: 128, top: 16, height: 22, padding: "0 5px 0 9px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.28)", display: "flex", alignItems: "center", gap: 6, color: "#fff", fontSize: 8.5, fontWeight: 500 }}>
-        Mary<span style={{ width: 22, height: 13, borderRadius: 999, background: "#0064FF", position: "relative", display: "block" }}><span style={{ position: "absolute", right: 1.5, top: 1.5, width: 10, height: 10, borderRadius: "50%", background: "#fff" }} /></span>
-      </div>
+      {tile("23", "сделала за вчера", 16, "#494F5C")}{tile("2", "ждут вас", 74, "#F2702A")}
     </div>
   );
 }
@@ -201,7 +195,7 @@ export function OnbSection() {
         lead="На шаге «Что есть на платформе» Mary открывает разделы по очереди. Рядом с пунктом меню появляется карточка: картинка, название, одно-два предложения и кнопки.">
         <Stage bg={ink(0.03)}><TourCard /></Stage>
         <Spec rows={[["Карточка", "ширина 268, скругление 20, поля 12"], ["Картинка", "высота 140, скругление 14"], ["Название", "16 Medium"], ["Текст", "13 Regular, вторичный цвет"], ["Кнопки", "34, главная чёрная, вторая белая с рамкой"]]} />
-        <Rules items={["Картинка «Главной»: тёмная плашка, зернистый градиент в цветах воркфлоу, растровые точки, поверх — живые плашки интерфейса.", <>Код: <Code>SceneCard</Code> и <Code>SCENES.home</Code> в <Code>src/platform/onb-scenes.jsx</Code>.</>, "Остальные разделы экскурсии пока в прежнем светлом стиле — переводим на новый по одному."]} />
+        <Rules items={["Картинка «Главной»: светлый фон, главный герой — карточка «Сводка дня»; за ней зернистая плашка-градиент в цветах воркфлоу, справа две плитки с числами.", <>Код: <Code>SceneCard</Code> и <Code>SCENES.home</Code> в <Code>src/platform/onb-scenes.jsx</Code>.</>, "Остальные разделы экскурсии переводим на этот стиль по одному."]} />
       </Card>
     </>
   );
