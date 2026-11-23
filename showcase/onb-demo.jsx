@@ -98,7 +98,6 @@ function OnbHead2({ at, got = 0 }) {
   const frac = done ? 1 : (at + Math.min(got, STEPS[at].n) / STEPS[at].n) / total;      // 0…1
   const left = done ? 0 : STEPS.slice(at).reduce((a, s) => a + s.n, 0) - got;             // сколько вопросов и разделов впереди
   const mins = Math.max(1, Math.round(left * 15 / 60));
-  const atStop = !done && at > 0 && got === 0;     // Mary доехала до остановки: голова прячется, оживает значок шага
   const EASE = "cubic-bezier(.4,0,.2,1)";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 18, height: 40 }}>
@@ -107,17 +106,20 @@ function OnbHead2({ at, got = 0 }) {
         <span style={{ position: "absolute", left: 0, right: 0, top: 19, height: 2, borderRadius: 2, background: ink(0.1) }} />
         <span style={{ position: "absolute", left: 0, top: 19, height: 2, borderRadius: 2, background: "var(--btn, #0E0E0F)", width: frac * 100 + "%", transition: `width .7s ${EASE}` }} />
         {STEPS.slice(1).map((s, k) => {
-          const i = k + 1, state = i < at ? "done" : i === at ? "current" : "next";
+          const i = k + 1;
+          if (i === at) return <span key={s.id} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 16, width: 8, height: 8, marginLeft: -4, borderRadius: "50%", background: "var(--btn, #0E0E0F)" }} />;
           return (
-            <span key={s.id} title={s.label} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 4, width: 32, height: 32, marginLeft: -16, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center",
-              transform: state === "current" && atStop ? "scale(1.18)" : "none", transition: "transform .35s cubic-bezier(.2,.9,.3,1.4)" }}>
-              <StepIcon id={s.id} state={state === "current" && !atStop ? "done" : state} />
+            <span key={s.id} title={s.label} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 4, width: 32, height: 32, marginLeft: -16, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center" }}>
+              <StepIcon id={s.id} state={i < at ? "done" : "next"} />
             </span>
           );
         })}
         <span style={{ position: "absolute", right: -3, top: 16, width: 8, height: 8, borderRadius: "50%", boxSizing: "border-box", background: done ? "var(--btn, #0E0E0F)" : "#fff", border: done ? "none" : `1.5px solid ${ink(0.2)}` }} />
-        <img src="assets/mary-head.png" alt="" width={26} height={26}
-          style={{ position: "absolute", top: 7, left: frac * 100 + "%", marginLeft: -13, display: "block", transition: `left .7s ${EASE}, opacity .25s ease .45s, transform .25s ease .45s`, opacity: atStop || done ? 0 : 1, transform: atStop || done ? "scale(.6)" : "none" }} />
+        {!done && (
+          <span style={{ position: "absolute", top: 4, left: frac * 100 + "%", width: 32, height: 32, marginLeft: -16, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center", transition: `left .7s ${EASE}` }}>
+            {at === 0 ? <img src="assets/mary-head.png" alt="" width={26} height={26} style={{ display: "block" }} /> : <StepIcon id={STEPS[at].id} state="current" size={26} />}
+          </span>
+        )}
       </span>
       <span style={{ fontSize: 12, color: ink(0.45), whiteSpace: "nowrap", minWidth: 96, textAlign: "right" }}>{done ? "готово" : `осталось ~${mins} мин`}</span>
     </div>
@@ -215,7 +217,7 @@ export function OnbSection() {
       </Card>
 
       <Card id="onb-head2" title="Шкала шагов — вариант на пробу"
-        lead="Одна строка вместо двух. Сплошная линия, по которой едет голова Mary. Значки шагов стоят на линии как остановки: Mary доезжает — значок оживает. Подпись только у текущего шага, справа — сколько осталось. Жмите «Ответить на вопрос» и сравнивайте с текущей шкалой под ней.">
+        lead="Одна строка вместо двух. Сплошная линия, по которой едет голова Mary. Значки шагов стоят на линии как остановки: Mary доезжает, подхватывает предмет шага и едет дальше уже с ним. Подпись только у текущего шага, справа — сколько осталось. Жмите «Ответить на вопрос» и сравнивайте с текущей шкалой под ней.">
         <HeadCompare />
         <Rules items={["Сколько вопросов внутри шага, не показываем — показываем, далеко ли до конца.", "Время справа считается от числа оставшихся вопросов и разделов (около 15 секунд на каждый).", "Названия остальных шагов — по наведению на значок.", "Это проба в витрине. В прототипе пока стоит прежняя шкала."]} />
       </Card>
