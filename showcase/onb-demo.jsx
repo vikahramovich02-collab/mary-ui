@@ -111,9 +111,9 @@ function Options({ items }) {
 
 // картинка раздела «Главная»: светлый фон, главный герой — «Сводка дня» от Mary, за ней зернистая плашка-градиент, справа две плитки с числами
 function SceneHome({ height = 140 }) {
-  const row = (c, t) => <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 9, fontWeight: 500, color: "#494F5C", whiteSpace: "nowrap" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: c }} />{t}</span>;
+  const row = (c, t) => <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 9, fontWeight: 500, color: "#494F5C", whiteSpace: "nowrap" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: c, flexShrink: 0 }} />{t}</span>;
   const tile = (n, t, top, c) => (
-    <div style={{ position: "absolute", right: 12, top, width: 76, height: 50, background: "#fff", borderRadius: 12, boxSizing: "border-box", padding: "8px 9px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 6px 16px rgba(40,50,120,0.10)" }}>
+    <div style={{ position: "absolute", right: 12, top, width: 66, height: 50, background: "#fff", borderRadius: 12, boxSizing: "border-box", padding: "8px 9px", display: "flex", flexDirection: "column", justifyContent: "space-between", boxShadow: "0 6px 16px rgba(40,50,120,0.10)" }}>
       <span style={{ fontSize: 18, fontWeight: 500, lineHeight: 1, letterSpacing: "-0.03em", color: c }}>{n}</span>
       <span style={{ fontSize: 8, fontWeight: 500, color: "rgba(73,79,92,0.55)", whiteSpace: "nowrap" }}>{t}</span>
     </div>
@@ -127,11 +127,11 @@ function SceneHome({ height = 140 }) {
           <rect width="100%" height="100%" filter="url(#ui-home-grain)" />
         </svg>
       </div>
-      <div style={{ position: "absolute", left: 26, top: 36, width: 126, background: "#fff", borderRadius: 14, boxSizing: "border-box", padding: "10px 11px 11px", display: "flex", flexDirection: "column", gap: 6, boxShadow: "0 12px 28px rgba(40,50,120,0.18)" }}>
+      <div style={{ position: "absolute", left: 24, top: 36, width: 134, background: "#fff", borderRadius: 14, boxSizing: "border-box", padding: "10px 11px 11px", display: "flex", flexDirection: "column", gap: 6, boxShadow: "0 12px 28px rgba(40,50,120,0.18)" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 6 }}><img src="assets/mary-head.png" alt="" width={16} height={16} /><span style={{ fontSize: 11.5, fontWeight: 500, color: "#494F5C" }}>Сводка дня</span></span>
         {row("#34C759", "Ответила 38 клиентам")}{row("#0064FF", "4 заявки завела в CRM")}{row("#FCA024", "2 дела ждут вас")}
       </div>
-      {tile("23", "сделала за вчера", 16, "#494F5C")}{tile("2", "ждут вас", 74, "#F2702A")}
+      {tile("23", "за вчера", 16, "#494F5C")}{tile("2", "ждут вас", 74, "#F2702A")}
     </div>
   );
 }
