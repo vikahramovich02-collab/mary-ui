@@ -107,7 +107,7 @@ function OnbHead2({ at, got = 0 }) {
         <span style={{ position: "absolute", left: 0, top: 19, height: 2, borderRadius: 2, background: "var(--btn, #0E0E0F)", width: frac * 100 + "%", transition: `width .7s ${EASE}` }} />
         {STEPS.slice(1).map((s, k) => {
           const i = k + 1;
-          if (i === at) return <span key={s.id} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 16, width: 8, height: 8, marginLeft: -4, borderRadius: "50%", background: "var(--btn, #0E0E0F)" }} />;
+          if (i === at) return null;
           return (
             <span key={s.id} title={s.label} style={{ position: "absolute", left: (i / total) * 100 + "%", top: 4, width: 32, height: 32, marginLeft: -16, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center" }}>
               <StepIcon id={s.id} state={i < at ? "done" : "next"} />
