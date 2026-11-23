@@ -1,0 +1,206 @@
+// Витрина: раздел «Онбординг» — компоненты знакомства с Mary (Вика, 23.11.2026).
+// Источник — код прототипа: src/platform/onb-cards.jsx (шкала шагов), onb-scenes.jsx (картинки разделов), onboarding-flow.js (шаги).
+import React, { useState, useRef, useEffect } from "react";
+
+const ink = (a) => `rgba(var(--ink-rgb),${a})`;
+const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
+const PROTO = "http://77.237.241.242:8083/?ready=1&onb=1";
+const A = "assets/onb/";
+
+const Card = ({ id, title, lead, children }) => (
+  <section className="card" id={id}>
+    <h2>{title}</h2>
+    {lead && <div className="src" style={{ fontSize: 14, color: "var(--text-2)", lineHeight: 1.55 }}>{lead}</div>}
+    {children}
+  </section>
+);
+const Code = ({ children }) => <code style={{ fontFamily: MONO, fontSize: 12, color: "var(--text)", background: ink(0.05), padding: "1px 6px", borderRadius: 6 }}>{children}</code>;
+const Stage = ({ children, pad = 24, bg = "#fff" }) => <div style={{ marginTop: 16, padding: pad, borderRadius: 16, border: `1px solid ${ink(0.08)}`, background: bg, overflow: "hidden" }}>{children}</div>;
+const Rules = ({ items }) => <ul style={{ margin: "14px 0 0", paddingLeft: 18, fontSize: 14, lineHeight: 1.6, color: "var(--text-2)" }}>{items.map((t, i) => <li key={i}>{t}</li>)}</ul>;
+const Spec = ({ rows }) => (
+  <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "max-content 1fr", gap: "6px 18px", fontSize: 13 }}>
+    {rows.map(([k, v], i) => <React.Fragment key={i}><span style={{ color: "var(--text-2)" }}>{k}</span><span style={{ color: "var(--text)", fontWeight: 500 }}>{v}</span></React.Fragment>)}
+  </div>
+);
+
+// шаги знакомства: id, подпись, сколько вопросов или разделов внутри (столько овальчиков в линии)
+const STEPS = [
+  { id: "about", label: "Наше знакомство", n: 5 },
+  { id: "tour", label: "Что есть на платформе", n: 7 },
+  { id: "first", label: "Первое дело", n: 4 },
+  { id: "launch", label: "Запуск", n: 2 },
+];
+
+// значок шага: у текущего ролик идёт по кругу, пройденные стоят на первом кадре, будущие — серые и бледные
+function StepIcon({ id, state, size = 22 }) {
+  const ref = useRef(null);
+  useEffect(() => { const v = ref.current; if (!v) return; if (state === "current") v.play().catch(() => {}); else { v.pause(); try { v.currentTime = 0; } catch (e) {} } }, [state]);
+  return (
+    <span style={{ width: size, height: size, display: "block", overflow: "hidden", mixBlendMode: "multiply", opacity: state === "next" ? 0.4 : 1, filter: state === "next" ? "grayscale(1)" : "none", transition: "opacity .35s ease, filter .35s ease" }}>
+      <video ref={ref} src={A + id + ".mp4"} poster={A + id + ".webp"} muted playsInline loop preload="auto" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+    </span>
+  );
+}
+
+// шкала шагов: голова Mary с названием и три значка в равных колонках, под ними линия из овальчиков
+function OnbHead({ at, got = 0 }) {
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", height: 30 }}>
+        {STEPS.map((s, i) => {
+          const state = i < at ? "done" : i === at ? "current" : "next";
+          return (
+            <span key={s.id} style={{ flex: "1 1 0", minWidth: 0, display: "flex", alignItems: "center", gap: i ? 4 : 8 }}>
+              {i === 0
+                ? <img src="assets/mary-head.png" alt="" width={26} height={26} style={{ display: "block", flexShrink: 0 }} />
+                : <span style={{ width: 32, display: "inline-flex", justifyContent: "center", flexShrink: 0 }}><StepIcon id={s.id} state={state} /></span>}
+              {(i <= at + 1) && <span style={{ fontSize: 13, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", color: state === "next" ? ink(0.35) : "var(--text)", transition: "color .3s ease" }}>{s.label}</span>}
+            </span>
+          );
+        })}
+      </div>
+      <div style={{ display: "flex", marginTop: 7, height: 8 }}>
+        {STEPS.map((s, i) => (
+          <span key={s.id} style={{ flex: "1 1 0", display: "flex", alignItems: "center", gap: 2, paddingLeft: i ? 16 : 13, paddingRight: 5, position: "relative" }}>
+            <span style={{ position: "absolute", left: i ? 12 : 9, top: 0, width: 8, height: 8, borderRadius: "50%", boxSizing: "border-box", background: i <= at ? "var(--btn, #0E0E0F)" : "#fff", border: i <= at ? "none" : `1.5px solid ${ink(0.2)}` }} />
+            <span style={{ width: 8, flexShrink: 0 }} />
+            {Array.from({ length: s.n }, (_, j) => (
+              <span key={j} style={{ flex: 1, height: 2, borderRadius: 2, background: i < at || (i === at && j < got) ? "var(--btn, #0E0E0F)" : ink(0.1), transition: "background .4s ease" }} />
+            ))}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HeadDemo() {
+  const [at, setAt] = useState(1), [got, setGot] = useState(2);
+  const pill = (on) => ({ height: 32, padding: "0 14px", borderRadius: 999, border: `1px solid ${on ? "transparent" : ink(0.14)}`, background: on ? "#0E0E0F" : "#fff", color: on ? "#fff" : "var(--text)", font: "inherit", fontSize: 13, fontWeight: 500, cursor: "pointer" });
+  return (
+    <>
+      <Stage><OnbHead at={at} got={got} /></Stage>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12, alignItems: "center" }}>
+        {STEPS.map((s, i) => <button key={s.id} style={pill(i === at)} onClick={() => { setAt(i); setGot(1); }}>Шаг {i + 1}</button>)}
+        <button style={pill(false)} onClick={() => setGot(g => Math.min(STEPS[at].n, g + 1))}>+ ответ</button>
+        <button style={pill(false)} onClick={() => { setAt(4); setGot(0); }}>Всё пройдено</button>
+      </div>
+    </>
+  );
+}
+
+// варианты ответа в чате знакомства: два столбца, стрелка слева, серый текст, на наведении — тёмный
+function Options({ items }) {
+  const [h, setH] = useState(-1);
+  return (
+    <div style={{ maxWidth: 620 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: ink(0.45), padding: "0 12px 8px" }}><span>Возможные варианты</span><span>Свернуть</span></div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 16 }}>
+        {items.map((t, i) => (
+          <button key={t} onMouseEnter={() => setH(i)} onMouseLeave={() => setH(-1)}
+            style={{ display: "flex", alignItems: "center", gap: 14, height: 36, padding: "0 12px", border: 0, borderRadius: 10, background: h === i ? ink(0.05) : "transparent", color: h === i ? "var(--text)" : ink(0.5), font: "inherit", fontSize: 14, cursor: "pointer", textAlign: "left", transition: "background .15s, color .15s" }}>
+            <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>{t}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// картинка раздела «Главная»: тёмная плашка, зернистый градиент, растровые точки, поверх — плашки интерфейса
+function SceneHome({ height = 140 }) {
+  const dots = [];
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 15; x++) {
+    const d = Math.hypot((x - 6.5) / 7.5, (y - 4.2) / 4.2), r = Math.max(0, 3.1 * (1 - d * d));
+    if (r > 0.35) dots.push(<circle key={x + "-" + y} cx={4 + x * 7} cy={4 + y * 7} r={r} />);
+  }
+  const row = (c, t) => <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 9, fontWeight: 500, color: "#494F5C", whiteSpace: "nowrap" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: c }} />{t}</span>;
+  return (
+    <div style={{ position: "relative", height, borderRadius: 14, overflow: "hidden", background: "#0E0E0F" }}>
+      <div style={{ position: "absolute", left: 14, top: 14, width: 104, bottom: 14, borderRadius: 16, overflow: "hidden",
+        background: "radial-gradient(60% 55% at 20% 18%, #FF6FD8 0%, rgba(255,111,216,0) 70%), radial-gradient(70% 60% at 85% 35%, #4B3AFF 0%, rgba(75,58,255,0) 72%), radial-gradient(70% 60% at 30% 95%, #0064FF 0%, rgba(0,100,255,0) 72%), radial-gradient(50% 45% at 90% 100%, #FCA024 0%, rgba(252,160,36,0) 70%), #6A5AFF" }}>
+        <svg width="100%" height="100%" style={{ position: "absolute", inset: 0, mixBlendMode: "overlay", opacity: 0.9 }}>
+          <filter id="ui-home-grain"><feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="2" stitchTiles="stitch" /><feColorMatrix values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.4 -0.35" /></filter>
+          <rect width="100%" height="100%" filter="url(#ui-home-grain)" />
+        </svg>
+      </div>
+      <svg width={106} height={58} viewBox="0 0 106 58" style={{ position: "absolute", right: 6, bottom: 4 }} fill="#B4A9FF">{dots}</svg>
+      <div style={{ position: "absolute", left: 56, top: 50, width: 130, background: "#fff", borderRadius: 12, boxSizing: "border-box", padding: "8px 10px 9px", display: "flex", flexDirection: "column", gap: 5, boxShadow: "0 12px 26px rgba(0,0,0,0.35)" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}><img src="assets/mary-head.png" alt="" width={15} height={15} /><span style={{ fontSize: 11, fontWeight: 500, color: "#494F5C" }}>Сводка дня</span></span>
+        {row("#34C759", "Ответила 38 клиентам")}{row("#FCA024", "2 дела ждут вас")}
+      </div>
+      <div style={{ position: "absolute", right: 16, top: 14, color: "#fff", textAlign: "right" }}>
+        <div style={{ fontSize: 22, fontWeight: 500, lineHeight: 1, letterSpacing: "-0.03em" }}>23</div>
+        <div style={{ fontSize: 8.5, fontWeight: 500, opacity: 0.6, marginTop: 3 }}>дела за вчера</div>
+      </div>
+      <div style={{ position: "absolute", left: 128, top: 16, height: 22, padding: "0 5px 0 9px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.28)", display: "flex", alignItems: "center", gap: 6, color: "#fff", fontSize: 8.5, fontWeight: 500 }}>
+        Mary<span style={{ width: 22, height: 13, borderRadius: 999, background: "#0064FF", position: "relative", display: "block" }}><span style={{ position: "absolute", right: 1.5, top: 1.5, width: 10, height: 10, borderRadius: "50%", background: "#fff" }} /></span>
+      </div>
+    </div>
+  );
+}
+
+// карточка раздела в экскурсии: картинка, название, описание, кнопки
+function TourCard() {
+  return (
+    <div style={{ width: 268, background: "#fff", borderRadius: 20, padding: 12, boxShadow: "0 12px 40px rgba(20,22,30,0.12)", boxSizing: "border-box" }}>
+      <SceneHome />
+      <div style={{ padding: "14px 8px 6px" }}>
+        <div style={{ fontSize: 16, fontWeight: 500, color: "var(--text)" }}>Главная</div>
+        <div style={{ fontSize: 13, lineHeight: 1.5, color: "var(--text-2)", marginTop: 6 }}>Каждое утро здесь сводка: что я сделала за вчера и что ждёт вашего решения.</div>
+        <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+          <button style={{ height: 34, padding: "0 16px", borderRadius: 999, border: 0, background: "#0E0E0F", color: "#fff", font: "inherit", fontSize: 13, fontWeight: 500 }}>Дальше</button>
+          <button style={{ height: 34, padding: "0 16px", borderRadius: 999, border: `1px solid ${ink(0.14)}`, background: "#fff", color: "var(--text)", font: "inherit", fontSize: 13, fontWeight: 500 }}>Позже</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function OnbSection() {
+  return (
+    <>
+      <Card id="onb-head" title="Шкала шагов"
+        lead={<>Стоит в шапке чата всё знакомство. Слева голова Mary с названием, дальше три шага в равных колонках. Под ними линия: у каждого шага столько овальчиков, сколько в нём вопросов или разделов. Нажмите на шаги ниже. <a href={PROTO} target="_blank" rel="noreferrer">Открыть в прототипе ↗</a></>}>
+        <HeadDemo />
+        <Spec rows={[["Высота строки", "30"], ["Голова Mary", "26 × 26"], ["Значок шага", "22 × 22, в ячейке 32"], ["Подпись", "13 Regular; будущий шаг — 35% чернил"], ["Линия", "овальчики 2 высотой, зазор 2; пройденные чёрные, остальные 10% чернил"], ["Точка шага", "8; пройденная чёрная, будущая — белая с обводкой"]]} />
+        <Rules items={["Подпись видна у пройденных, текущего и следующего шага. У остальных — только значок.", "Не хватает ширины — подпись остаётся только у текущего шага.", <>Код: <Code>OnbHead</Code> в <Code>src/platform/onb-cards.jsx</Code>, шаги — <Code>ONB_STEPS</Code> в <Code>onboarding-flow.js</Code>.</>]} />
+      </Card>
+
+      <Card id="onb-icons" title="Значки шагов"
+        lead="На каждом значке наша собачка и предмет шага. Собачка всегда графитовая, предмет — в цвете воркфлоу. Текущий шаг играет ролик по кругу, пройденные стоят на первом кадре, будущие серые.">
+        <Stage>
+          <div style={{ display: "flex", gap: 40, flexWrap: "wrap" }}>
+            {[["tour", "Что есть на платформе", "карта, синий #2F7BFF"], ["first", "Первое дело", "листок с галочкой, оранжевый #FCA024"], ["launch", "Запуск", "ракета, фиолетовый #6A5AFF"]].map(([id, t, c]) => (
+              <div key={id} style={{ width: 170 }}>
+                <StepIcon id={id} state="current" size={120} />
+                <div style={{ fontSize: 14, fontWeight: 500, color: "var(--text)", marginTop: 10 }}>{t}</div>
+                <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 2 }}>{c}</div>
+                <div style={{ display: "flex", gap: 14, alignItems: "center", marginTop: 12 }}>
+                  <StepIcon id={id} state="current" /><StepIcon id={id} state="done" /><StepIcon id={id} state="next" />
+                </div>
+                <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 4 }}>текущий · пройден · впереди</div>
+              </div>
+            ))}
+          </div>
+        </Stage>
+        <Spec rows={[["Стиль", "плоский, контур чёрный, без теней и объёма"], ["Собачка", "графит #33353F, как голова Mary"], ["Ролик", "3 секунды, зациклен, без звука, белый фон"], ["Файлы", "public/onb/steps3/tour|first|launch .mp4 и .webp, 192 × 192"]]} />
+        <Rules items={["Новый шаг — новый значок в той же манере: собачка плюс один цветной предмет.", "Будущий шаг: значок серый (grayscale) и 40% непрозрачности.", "Значки накладываются умножением (mix-blend-mode: multiply), чтобы белый фон ролика не был виден."]} />
+      </Card>
+
+      <Card id="onb-options" title="Варианты ответа"
+        lead="Под вопросом Mary предлагает готовые ответы. Они стоят над полем ввода в два столбца, стрелка слева. Свой ответ всегда можно написать в поле.">
+        <Stage><Options items={["Красота и уход", "Медицина и ветеринария", "Обучение и спорт", "Кафе, отели, ивенты", "Ремонт и недвижимость", "Авто и транспорт", "Магазин и маркетплейс", "Услуги для бизнеса", "Производство", "Другое, напишу"]} /></Stage>
+        <Spec rows={[["Строка", "высота 36, скругление 10"], ["Текст", "14 Regular, 50% чернил; на наведении — основной цвет и подложка 5%"], ["Стрелка", "14, линия 1.5, слева от текста"], ["Заголовок", "«Возможные варианты», 12, справа «Свернуть»"]]} />
+        <Rules items={["Не больше десяти вариантов. Последний — «Другое, напишу».", "Плашки-таблетки для вариантов не используем."]} />
+      </Card>
+
+      <Card id="onb-tour" title="Карточка раздела в экскурсии"
+        lead="На шаге «Что есть на платформе» Mary открывает разделы по очереди. Рядом с пунктом меню появляется карточка: картинка, название, одно-два предложения и кнопки.">
+        <Stage bg={ink(0.03)}><TourCard /></Stage>
+        <Spec rows={[["Карточка", "ширина 268, скругление 20, поля 12"], ["Картинка", "высота 140, скругление 14"], ["Название", "16 Medium"], ["Текст", "13 Regular, вторичный цвет"], ["Кнопки", "34, главная чёрная, вторая белая с рамкой"]]} />
+        <Rules items={["Картинка «Главной»: тёмная плашка, зернистый градиент в цветах воркфлоу, растровые точки, поверх — живые плашки интерфейса.", <>Код: <Code>SceneCard</Code> и <Code>SCENES.home</Code> в <Code>src/platform/onb-scenes.jsx</Code>.</>, "Остальные разделы экскурсии пока в прежнем светлом стиле — переводим на новый по одному."]} />
+      </Card>
+    </>
+  );
+}

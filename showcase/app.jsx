@@ -7,6 +7,7 @@ import { TypeSection } from "./type-demo.jsx";
 import { AuthSection } from "./auth-demo.jsx";
 import { LoginProtoSection } from "./login-proto.jsx";
 import { ProtoIcons } from "./proto-icons.jsx";
+import { OnbSection } from "./onb-demo.jsx";
 import MANIFEST from "../data/manifest.json";
 
 const FIGMA = "https://www.figma.com/design/o1syNp93H3v2dyA3JHp4em/Mary?node-id=";
@@ -88,7 +89,7 @@ export function App() {
   const total = Object.values(bySec).reduce((a, l) => a + l.length, 0);
   const query = q.trim().toLowerCase();
   const hits = query ? Object.values(bySec).flat().filter(([n, C]) => n.toLowerCase().includes(query) || C.figma.name.toLowerCase().includes(query) || C.figma.id.includes(query)) : null;
-  const SECS = [MANIFEST.sections[0], { id: "states-crm", title: "Поля форм и CRM" }, { id: "popups", title: "Попапы" }, { id: "type", title: "Шрифт и стили" }, { id: "auth", title: "Вход и пароль" }, ...MANIFEST.sections.slice(1)];
+  const SECS = [MANIFEST.sections[0], { id: "states-crm", title: "Поля форм и CRM" }, { id: "popups", title: "Попапы" }, { id: "type", title: "Шрифт и стили" }, { id: "auth", title: "Вход и пароль" }, { id: "onb", title: "Онбординг" }, ...MANIFEST.sections.slice(1)];
   const cur = SECS.find(s => s.id === sec) || SECS[0];
   return (
     <div className="shell">
@@ -98,7 +99,7 @@ export function App() {
         <input className="search" placeholder="Найти компонент" value={q} onChange={e => setQ(e.target.value)} />
         {SECS.map(s => (
           <button key={s.id} className={"navi" + (s.id === sec && !query ? " on" : "")} onClick={() => { setQ(""); setSec(s.id); }}>
-            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "type" ? 16 : s.id === "auth" ? 9 : s.id === "login" ? 8 : s.id === "icons" ? (bySec.icons || []).length + 360 : (bySec[s.id] || []).length}</span>
+            <span>{s.title}</span><span className="cnt">{s.id === "states" ? 11 : s.id === "states-crm" ? 3 : s.id === "popups" ? 4 : s.id === "type" ? 16 : s.id === "auth" ? 9 : s.id === "onb" ? 4 : s.id === "login" ? 8 : s.id === "icons" ? (bySec.icons || []).length + 360 : (bySec[s.id] || []).length}</span>
           </button>
         ))}
         {/* не нашли нужное — сразу в личный телеграм */}
@@ -127,7 +128,9 @@ export function App() {
                 <h1>{cur.title}</h1>
                 <input className="search pq" placeholder="Найти на странице" value={pq} onChange={e => setPq(e.target.value)} />
               </div>
-              <p className="lead">{sec === "login"
+              <p className="lead">{sec === "onb"
+                ? "Компоненты знакомства с Mary: шкала шагов, значки с собачкой, варианты ответа и карточка раздела в экскурсии. Источник — код прототипа (эталон)."
+                : sec === "login"
                 ? "Компоненты входа взяты из кода прототипа (эталон): src/platform/vision-login.jsx и vision-join.jsx — стили и тексты 1:1. У каждого — ссылка в прототип и в Figma."
                 : sec === "auth"
                 ? "Поля входа, иконки, подсказки и ошибки, требование к паролю и сценарии: вход, восстановление пароля, создание организации. Источник — Figma «Вход/Регистрация» и прототип."
@@ -140,7 +143,7 @@ export function App() {
                 : `Сгенерировано из Figma (${cur.src}): components/${sec}.jsx + data/${sec}.json. Каждый вариант — живой React-компонент, наведите курсор на варианты с состоянием «Наведение».`}</p>
             </header>
             <div id="pq-empty" className="lead" style={{ display: "none" }}>На этой странице ничего не нашлось. Попробуйте поиск слева — он ищет по всем компонентам</div>
-            {sec === "auth" ? <AuthSection /> : sec === "login" ? <LoginProtoSection /> : sec === "type" ? <TypeSection /> : sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <><IconsGrid items={bySec.icons || []} /><ProtoIcons /></> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
+            {sec === "onb" ? <OnbSection /> : sec === "auth" ? <AuthSection /> : sec === "login" ? <LoginProtoSection /> : sec === "type" ? <TypeSection /> : sec === "popups" ? <PopupsSection /> : sec === "states" ? <StatesSection /> : sec === "states-crm" ? <CrmStatesSection /> : sec === "icons" ? <><IconsGrid items={bySec.icons || []} /><ProtoIcons /></> : (bySec[sec] || []).map(([n, C]) => <CompCard key={n} name={n} Comp={C} />)}
           </>
         )}
       </main>
